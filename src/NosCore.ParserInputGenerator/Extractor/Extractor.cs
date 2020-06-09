@@ -21,7 +21,7 @@ namespace NosCore.ParserInputGenerator.Extractor
 
         public Task ExtractAsync(FileInfo file, string dest) => ExtractAsync(file, dest, false);
 
-        public Task ExtractAsync(FileInfo file) => ExtractAsync(file, ".\\output\\");
+        public Task ExtractAsync(FileInfo file) => ExtractAsync(file, $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}");
 
         public async Task ExtractAsync(FileInfo nosFile, string directory, bool rename)
         {

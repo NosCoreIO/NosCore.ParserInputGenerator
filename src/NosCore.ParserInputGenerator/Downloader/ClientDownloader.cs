@@ -48,10 +48,10 @@ namespace NosCore.ParserInputGenerator.Downloader
 
                 if (entry.Folder)
                 {
-                    Directory.CreateDirectory($".\\output\\{entry.File}");
+                    Directory.CreateDirectory($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{entry.File}");
                     return;
                 }
-                var file = $".\\output\\{entry.File}";
+                var file = $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{entry.File}";
                 if (File.Exists(file))
                 {
                     var fop = File.OpenRead(file);
