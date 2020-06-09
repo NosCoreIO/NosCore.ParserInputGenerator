@@ -4,6 +4,7 @@
   <img src="https://cdn.discordapp.com/attachments/319565884454731795/426892646288457728/N2.png"/>
 </p>
 
+[![NuGet](https://img.shields.io/nuget/v/NosCore.Dao.svg?style=flat-square)](https://www.nuget.org/packages/NosCore.ParserInputGenerator/)
 [![Travis build status](https://travis-ci.org/NosCoreIO/NosCore.Shared.svg?branch=master)](https://travis-ci.org/NosCoreIO/NosCore.ParserInputGenerator)
 
 ## You like our work ? ##
