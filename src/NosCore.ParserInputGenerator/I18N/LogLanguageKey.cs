@@ -11,5 +11,8 @@ namespace NosCore.ParserInputGenerator.I18N
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum LogLanguageKey
     {
+        DOWNLOAD_SUCCESSFULL,
+        PARSER_INPUT_GENERATED,
+        ERROR
     }
 }

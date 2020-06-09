@@ -59,5 +59,14 @@ namespace NosCore.ParserInputGenerator.Resource {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloaded {0} successfully.
+        /// </summary>
+        public static string DOWNLOAD_SUCCESSFULL {
+            get {
+                return ResourceManager.GetString("DOWNLOAD_SUCCESSFULL", resourceCulture);
+            }
+        }
     }
 }

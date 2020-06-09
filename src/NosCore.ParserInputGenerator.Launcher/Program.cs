@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NosCore.ParserInputGenerator.Configuration;
+using NosCore.ParserInputGenerator.Downloader;
+using NosCore.ParserInputGenerator.Extractor;
+using NosCore.ParserInputGenerator.Launcher.Configuration;
 using NosCore.Shared.Configuration;
 using Serilog;
 
-namespace NosCore.ParserInputGenerator
+namespace NosCore.ParserInputGenerator.Launcher
 {
     class Program
     {
@@ -29,8 +31,11 @@ namespace NosCore.ParserInputGenerator
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton(configuration);
+                    services.AddTransient<IExtractor, Extractor.Extractor>();
+                    services.AddTransient<IClientDownloader, ClientDownloader>();
+                    services.AddHttpClient();
                     services.AddHostedService<Worker>();
-                });
+                }); 
         }
     }
 }

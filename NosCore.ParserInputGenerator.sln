@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosCore.ParserInputGenerator", "src\NosCore.ParserInputGenerator\NosCore.ParserInputGenerator.csproj", "{9B71EBA0-D169-434B-A073-065DBCE0DA4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosCore.ParserInputGenerator.Launcher", "src\NosCore.ParserInputGenerator.Launcher\NosCore.ParserInputGenerator.Launcher.csproj", "{9B71EBA0-D169-434B-A073-065DBCE0DA4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosCore.ParserInputGenerator.Tests", "test\NosCore.ParserInputGenerator.Tests\NosCore.ParserInputGenerator.Tests.csproj", "{D45929C7-77D4-46E4-A7B6-A5D6F651B21B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosCore.ParserInputGenerator.Tests", "test\NosCore.ParserInputGenerator.Tests\NosCore.ParserInputGenerator.Tests.csproj", "{D45929C7-77D4-46E4-A7B6-A5D6F651B21B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosCore.ParserInputGenerator", "src\NosCore.ParserInputGenerator\NosCore.ParserInputGenerator.csproj", "{0774FB02-A0BD-4CE1-9CA4-89722165334B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D45929C7-77D4-46E4-A7B6-A5D6F651B21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D45929C7-77D4-46E4-A7B6-A5D6F651B21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D45929C7-77D4-46E4-A7B6-A5D6F651B21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0774FB02-A0BD-4CE1-9CA4-89722165334B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0774FB02-A0BD-4CE1-9CA4-89722165334B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0774FB02-A0BD-4CE1-9CA4-89722165334B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0774FB02-A0BD-4CE1-9CA4-89722165334B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

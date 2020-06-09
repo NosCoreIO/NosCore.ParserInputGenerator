@@ -10,9 +10,9 @@ addons:
 install:
   - 'export PATH="$PATH:/home/travis/.dotnet/tools"'
   - 'export PATH="$PATH:$HOME/.local/bin"'
+  - pip install --user awscli
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
-  - chmod -R a+x scripts
 env:
   global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
@@ -25,3 +25,32 @@ jobs:
         - dotnet restore
         - dotnet build
         - dotnet test test/NosCore.ParserInputGenerator.Tests -v m
+    - stage: release_nuget_packages
+      name: Build NosCore.ParserInputGenerator package (nuget)
+      if: (tag =~ /^((\d+\.)+\d+)/)
+      script:
+        - dotnet restore
+        - dotnet build -c Release
+        - dotnet pack -c Release -o /tmp/nupkgs -v m -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      deploy:
+        provider: script
+        script: dotnet nuget push /tmp/nupkgs/NosCore.ParserInputGenerator.${TRAVIS_TAG}.nupkg -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json
+        edge: true
+        cleanup: false
+        'on':
+          tags: true
+    - stage: release_github
+      name: Publish Release on GitHub
+      if: (tag =~ /^((\d+\.)+\d+)/)
+      script:
+        - dotnet restore
+        - dotnet build -c Release
+        - dotnet pack -c Release -o /tmp/nupkgs -v m
+      deploy:
+        provider: releases
+        edge: true
+        token: ${GITHUB_TOKEN}
+        file: /tmp/nupkgs/NosCore.ParserInputGenerator.${TRAVIS_TAG}.nupkg
+        cleanup: false
+        'on':
+          tags: true
