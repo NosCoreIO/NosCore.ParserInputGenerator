@@ -27,22 +27,23 @@ namespace NosCore.ParserInputGenerator.Extractor
         {
             async Task WriteFile(string fileName, MemoryStream decryptedContent)
             {
-                FileStream fileStream;
                 if (rename && fileName.Contains("."))
                 {
                     var name = fileName.Substring(0, fileName.IndexOf('.'));
                     var ext = fileName.Substring(fileName.IndexOf('.'));
-                    fileStream =
+                    await using var fileStream =
                         File.Create(
                             $"{directory}{name}{nosFile.Name.Substring(nosFile.Name.LastIndexOf('_'), 3)}{ext}");
+                    decryptedContent.Seek(0, SeekOrigin.Begin);
+                    await decryptedContent.CopyToAsync(fileStream);
                 }
                 else
                 {
-                    fileStream = File.Create($"{directory}{fileName}");
+                    await using var fileStream = File.Create($"{directory}{fileName}");
+                    decryptedContent.Seek(0, SeekOrigin.Begin);
+                    await decryptedContent.CopyToAsync(fileStream);
                 }
-
-                decryptedContent.Seek(0, SeekOrigin.Begin);
-                await decryptedContent.CopyToAsync(fileStream);
+      
             }
 
             try
@@ -69,7 +70,7 @@ namespace NosCore.ParserInputGenerator.Extractor
                         currentIndex += 4;
                         var compressedDataSize = BitConverter.ToInt32(fsSource.Skip(currentIndex).Take(4).ToArray());
                         currentIndex += 5;
-                        var outputStream = new MemoryStream();
+                        await using var outputStream = new MemoryStream();
                         var bigEndian = fsSource.Skip(currentIndex).Take(dataSize + compressedDataSize).ToArray();
                         await using var compressedStream = new MemoryStream(bigEndian);
                         await using var inputStream = new InflaterInputStream(compressedStream);
@@ -95,7 +96,7 @@ namespace NosCore.ParserInputGenerator.Extractor
                         var fileContent = fsSource.Skip(currentIndex).Take(fileSize).ToArray();
                         currentIndex += fileSize;
 
-                        var decryptedContent = new MemoryStream(DecryptDat(fileContent));
+                        await using var decryptedContent = new MemoryStream(DecryptDat(fileContent));
                         await WriteFile(fileName, decryptedContent);
                     }
                 }
