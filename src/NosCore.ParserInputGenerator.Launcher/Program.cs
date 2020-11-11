@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NosCore.ParserInputGenerator.Downloader;
@@ -19,7 +20,7 @@ namespace NosCore.ParserInputGenerator.Launcher
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var configuration = new ParserInputGeneratorConfiguration();
-            ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "parser-input-generator.yml" }, configuration);
+            ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "parser-input-generator.yml" }).Bind(configuration);
             return Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(
                     loggingBuilder =>

@@ -54,7 +54,7 @@ namespace NosCore.ParserInputGenerator.Downloader
                 var file = $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{entry.File}";
                 if (File.Exists(file))
                 {
-                    var fop = File.OpenRead(file);
+                    await using var fop = File.OpenRead(file);
                     var chksum = BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop)).Replace("-", "").ToLowerInvariant();
                     if (chksum == entry.Sha1)
                     {
