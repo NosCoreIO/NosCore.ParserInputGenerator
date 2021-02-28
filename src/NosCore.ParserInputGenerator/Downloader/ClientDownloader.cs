@@ -8,9 +8,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NosCore.ParserInputGenerator.I18N;
 using NosCore.Shared.Enumerations;
 
@@ -35,7 +36,10 @@ namespace NosCore.ParserInputGenerator.Downloader
             using var result = await client
                 .GetAsync($"https://spark.gameforge.com/api/v1/patching/download/latest/nostale/default?locale=${region}&architecture=x64&branchToken")
                 .ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<ClientManifest>(await result.Content.ReadAsStringAsync().ConfigureAwait(false));
+            return JsonSerializer.Deserialize<ClientManifest>(await result.Content.ReadAsStringAsync().ConfigureAwait(false), new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+            }) ?? throw new InvalidOperationException();
         }
 
         public async Task DownloadClientAsync() => await DownloadClientAsync(await DownloadManifest());
@@ -61,6 +65,9 @@ namespace NosCore.ParserInputGenerator.Downloader
                         return;
                     }
                 }
+
+                _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOADING),
+                    entry.Path);
                 using var response = await client.GetAsync($"http://patches.gameforge.com/" + entry.Path)
                     .ConfigureAwait(false);
 

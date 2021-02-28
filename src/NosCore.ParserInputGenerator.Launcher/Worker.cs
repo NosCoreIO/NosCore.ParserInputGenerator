@@ -87,6 +87,7 @@ namespace NosCore.ParserInputGenerator.Launcher
                 var entry = TarEntry.CreateEntryFromFile(fileToBeTarred.FullName);
                 tarArchive.WriteEntry(entry, true);
             }
+            tarArchive.Dispose();
             _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PARSER_INPUT_GENERATED));
         }
     }

@@ -13,6 +13,7 @@ namespace NosCore.ParserInputGenerator.I18N
     {
         DOWNLOAD_SUCCESSFULL,
         PARSER_INPUT_GENERATED,
-        ERROR
+        ERROR,
+        DOWNLOADING
     }
 }

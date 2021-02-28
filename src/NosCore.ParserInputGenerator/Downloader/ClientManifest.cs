@@ -1,37 +1,38 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NosCore.ParserInputGenerator.Downloader
 {
     public class ClientManifest
     {
-        [JsonProperty("entries")]
+        [JsonPropertyName("entries")]
         public Entry[] Entries { get; set; } = null!;
 
-        [JsonProperty("totalSize")]
+        [JsonPropertyName("totalSize")]
         public long TotalSize { get; set; }
 
-        [JsonProperty("build")]
+        [JsonPropertyName("build")]
         public long Build { get; set; }
     }
 
     public class Entry
     {
-        [JsonProperty("path", NullValueHandling = NullValueHandling.Ignore)]
-        public string Path { get; set; } = null!;
+        [JsonPropertyName("path")]
+        public string? Path { get; set; }
 
-        [JsonProperty("sha1", NullValueHandling = NullValueHandling.Ignore)]
-        public string Sha1 { get; set; } = null!;
+        [JsonPropertyName("sha1")]
+        public string? Sha1 { get; set; }
 
-        [JsonProperty("file")]
+        [JsonPropertyName("file")]
         public string File { get; set; } = null!;
 
-        [JsonProperty("flags")]
+        [JsonPropertyName("flags")]
         public long Flags { get; set; }
 
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public long Size { get; set; }
 
-        [JsonProperty("folder")]
+        [JsonPropertyName("folder")]
         public bool Folder { get; set; }
     }
 
