@@ -61,6 +61,9 @@ namespace NosCore.ParserInputGenerator.Downloader
                         return;
                     }
                 }
+
+                _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOADING),
+                    entry.Path);
                 using var response = await client.GetAsync($"http://patches.gameforge.com/" + entry.Path)
                     .ConfigureAwait(false);
 

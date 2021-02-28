@@ -30,7 +30,7 @@ namespace NosCore.ParserInputGenerator.Extractor
                 if (rename && fileName.Contains("."))
                 {
                     var name = fileName.Substring(0, fileName.IndexOf('.'));
-                    var ext = fileName.Substring(fileName.IndexOf('.'));
+                    var ext = fileName[fileName.IndexOf('.')..];
                     await using var fileStream =
                         File.Create(
                             $"{directory}{name}{nosFile.Name.Substring(nosFile.Name.LastIndexOf('_'), 3)}{ext}");
@@ -107,7 +107,7 @@ namespace NosCore.ParserInputGenerator.Extractor
             }
         }
 
-        private byte[] DecryptDat(byte[] array)
+        private static byte[] DecryptDat(byte[] array)
         {
             var cryptoarray = new[]
                 {0x00, 0x20, 0x2D, 0x2E, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x0A, 0x00};
