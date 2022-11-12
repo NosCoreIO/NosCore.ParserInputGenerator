@@ -38,7 +38,7 @@ jobs:
         dotnet restore
         dotnet build -c Release
         dotnet pack -c Release -o /tmp/nupkgs -v m -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
-        dotnet nuget push /tmp/nupkgs/NosCore.ParserInputGenerator.${{github.event.ref}}.snupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}}
+        dotnet nuget push /tmp/nupkgs/NosCore.ParserInputGenerator.${{github.event.ref}}.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}}
         echo ::set-output name=ARTIFACT_PATH::/tmp/nupkgs/NosCore.ParserInputGenerator.${{github.event.ref}}.snupkg
         echo ::set-output name=ARTIFACT_NAME::NosCore.ParserInputGenerator.${{github.event.ref}}.snupkg
         
