@@ -73,7 +73,7 @@ namespace NosCore.ParserInputGenerator.Launcher
                 var fileInfo = new FileInfo($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{file}");
                 await _extractor.ExtractAsync(fileInfo, dest, rename);
             }
-            var directoryOfFilesToBeTarred = new DirectoryInfo(".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser");
+            var directoryOfFilesToBeTarred = new DirectoryInfo($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser");
             var filesInDirectory = directoryOfFilesToBeTarred.GetFiles("*.*", SearchOption.AllDirectories);
             var tarArchiveName = $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser-input-files.tar.bz2";
             if (File.Exists(tarArchiveName))
