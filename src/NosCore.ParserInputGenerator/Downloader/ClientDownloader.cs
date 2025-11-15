@@ -17,19 +17,29 @@ using NosCore.Shared.Enumerations;
 
 namespace NosCore.ParserInputGenerator.Downloader
 {
+    /// <summary>
+    /// Implements client file downloading functionality.
+    /// </summary>
     public class ClientDownloader : IClientDownloader
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly ILogger<ClientDownloader> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientDownloader"/> class.
+        /// </summary>
+        /// <param name="clientFactory">The HTTP client factory.</param>
+        /// <param name="logger">The logger instance.</param>
         public ClientDownloader(IHttpClientFactory clientFactory, ILogger<ClientDownloader> logger)
         {
             _clientFactory = clientFactory;
             _logger = logger;
         }
 
+        /// <inheritdoc/>
         public Task<ClientManifest> DownloadManifest() => DownloadManifestAsync(RegionType.EN);
 
+        /// <inheritdoc/>
         public async Task<ClientManifest> DownloadManifestAsync(RegionType region)
         {
             var client = _clientFactory.CreateClient();
@@ -42,8 +52,10 @@ namespace NosCore.ParserInputGenerator.Downloader
             }) ?? throw new InvalidOperationException();
         }
 
+        /// <inheritdoc/>
         public async Task DownloadClientAsync() => await DownloadClientAsync(await DownloadManifest());
 
+        /// <inheritdoc/>
         public async Task DownloadClientAsync(ClientManifest manifest)
         {
             async Task Download(Entry entry)

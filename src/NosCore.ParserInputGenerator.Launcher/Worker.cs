@@ -14,6 +14,9 @@ using NosCore.Shared.I18N;
 
 namespace NosCore.ParserInputGenerator.Launcher
 {
+    /// <summary>
+    /// Background service worker that downloads and processes parser input files.
+    /// </summary>
     public class Worker : BackgroundService
     {
         private const string ConsoleText = "PARSER INPUT GENERATOR - NosCoreIO";
@@ -45,6 +48,12 @@ namespace NosCore.ParserInputGenerator.Launcher
             "NSgtdData.NOS"
         };
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Worker"/> class.
+        /// </summary>
+        /// <param name="logger">The logger instance.</param>
+        /// <param name="client">The client downloader.</param>
+        /// <param name="extractor">The file extractor.</param>
         public Worker(ILogger<Worker> logger, IClientDownloader client, IExtractor extractor)
         {
             _logger = logger;
@@ -52,6 +61,11 @@ namespace NosCore.ParserInputGenerator.Launcher
             _extractor = extractor;
         }
 
+        /// <summary>
+        /// Executes the worker task to download, extract, and package parser input files.
+        /// </summary>
+        /// <param name="stoppingToken">Cancellation token to stop the service.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
