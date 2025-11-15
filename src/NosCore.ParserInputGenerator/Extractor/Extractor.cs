@@ -10,19 +10,29 @@ using NosCore.ParserInputGenerator.I18N;
 
 namespace NosCore.ParserInputGenerator.Extractor
 {
+    /// <summary>
+    /// Implements file extraction functionality for NostaleData archives.
+    /// </summary>
     public class Extractor : IExtractor
     {
         private readonly ILogger<Extractor> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Extractor"/> class.
+        /// </summary>
+        /// <param name="logger">The logger instance.</param>
         public Extractor(ILogger<Extractor> logger)
         {
             _logger = logger;
         }
 
+        /// <inheritdoc/>
         public Task ExtractAsync(FileInfo file, string dest) => ExtractAsync(file, dest, false);
 
+        /// <inheritdoc/>
         public Task ExtractAsync(FileInfo file) => ExtractAsync(file, $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}");
 
+        /// <inheritdoc/>
         public async Task ExtractAsync(FileInfo nosFile, string directory, bool rename)
         {
             async Task WriteFile(string fileName, MemoryStream decryptedContent)
