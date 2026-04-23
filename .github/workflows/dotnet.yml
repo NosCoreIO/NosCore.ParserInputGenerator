@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v5
     - name: Setup .NET
@@ -47,5 +49,4 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: ${{ steps.build_artifact.outputs.ARTIFACT_PATH }}
-        token: ${{ secrets.REPO_TOKEN }}
         
