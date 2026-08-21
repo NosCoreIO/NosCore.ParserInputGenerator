@@ -113,7 +113,7 @@ namespace NosCore.ParserInputGenerator.Extractor
             }
             catch (Exception ex)
             {
-                _logger.LogError(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.ERROR), ex);
+                _logger.LogError(ex, "Extraction failed for {File}", nosFile.FullName);
             }
         }
 

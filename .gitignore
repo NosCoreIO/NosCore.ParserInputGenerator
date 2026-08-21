@@ -499,3 +499,4 @@ fabric.properties
 /build/netcoreapp*.*
 /build/net*.*
 /publish
+/output/
