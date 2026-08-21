@@ -35,3 +35,19 @@ This is an independent and unofficial server for educational use ONLY. Using the
 We recommend usage of :
 * [Roslynator extension](https://github.com/JosefPihrt/Roslynator).
 * [Resharper](https://www.jetbrains.com/resharper/)
+
+## Linux/container usage
+
+Build and run the generator without a host .NET SDK:
+
+```sh
+podman build -t noscore-parser-input-generator .
+podman run --rm \
+  -v "$PWD/output:/app/build/net10.0/output" \
+  noscore-parser-input-generator
+```
+
+The generated contract is `output/parser`, with binary map files in
+`output/parser/map`. Manifest paths are accepted with either `\\` or `/`
+separators. Optional language archives absent from the current Gameforge
+manifest are skipped rather than passed to the extractor.
