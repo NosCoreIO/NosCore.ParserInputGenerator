@@ -24,6 +24,7 @@ namespace NosCore.ParserInputGenerator.Launcher
         private readonly ILogger<Worker> _logger;
         private readonly IClientDownloader _client;
         private readonly IExtractor _extractor;
+        private readonly IHostApplicationLifetime _lifetime;
 
         private readonly string[] _parserInputFiles = {
             "NScliData_CZ.NOS",
@@ -54,11 +55,13 @@ namespace NosCore.ParserInputGenerator.Launcher
         /// <param name="logger">The logger instance.</param>
         /// <param name="client">The client downloader.</param>
         /// <param name="extractor">The file extractor.</param>
-        public Worker(ILogger<Worker> logger, IClientDownloader client, IExtractor extractor)
+        public Worker(ILogger<Worker> logger, IClientDownloader client, IExtractor extractor,
+            IHostApplicationLifetime lifetime)
         {
             _logger = logger;
             _client = client;
             _extractor = extractor;
+            _lifetime = lifetime;
         }
 
         /// <summary>
@@ -77,14 +80,32 @@ namespace NosCore.ParserInputGenerator.Launcher
                 // ignored as header is not important
             }
             var manifest = await _client.DownloadManifest();
-            var fileslist = _parserInputFiles.Select(o => $"NostaleData{Path.DirectorySeparatorChar}{o}").ToList();
-            manifest.Entries = manifest.Entries.Where(s => fileslist.Contains(s.File)).ToArray();
+
+            var requestedFiles = _parserInputFiles.ToHashSet(System.StringComparer.OrdinalIgnoreCase);
+
+            manifest.Entries = manifest.Entries
+                .Where(entry =>
+                {
+                    return requestedFiles.Contains(ManifestPath.GetFileName(entry.File));
+                })
+                .ToArray();
+
             await _client.DownloadClientAsync(manifest);
-            foreach (var file in fileslist)
+
+            foreach (var entry in manifest.Entries)
             {
-                var rename = file.Contains("NScliData");
-                var dest = file.Contains("NStcData") ? $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser{Path.DirectorySeparatorChar}maps{Path.DirectorySeparatorChar}" : $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser{Path.DirectorySeparatorChar}";
-                var fileInfo = new FileInfo($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{file}");
+                var fileName = ManifestPath.GetFileName(entry.File);
+
+                var rename = fileName.Contains("NScliData");
+
+                var dest = fileName.Contains("NStcData")
+                    ? Path.Combine(".", "output", "parser", "map") + Path.DirectorySeparatorChar
+                    : $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser{Path.DirectorySeparatorChar}";
+
+                var localPath = ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File);
+
+                var fileInfo = new FileInfo(localPath);
+
                 await _extractor.ExtractAsync(fileInfo, dest, rename);
             }
             var directoryOfFilesToBeTarred = new DirectoryInfo($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}parser");
@@ -103,6 +124,7 @@ namespace NosCore.ParserInputGenerator.Launcher
             }
             tarArchive.Dispose();
             _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PARSER_INPUT_GENERATED));
+            _lifetime.StopApplication();
         }
     }
 }

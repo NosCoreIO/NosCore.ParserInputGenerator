@@ -44,7 +44,7 @@ namespace NosCore.ParserInputGenerator.Downloader
         {
             var client = _clientFactory.CreateClient();
             using var result = await client
-                .GetAsync($"https://spark.gameforge.com/api/v1/patching/download/latest/nostale/default?locale=${region}&architecture=x64&branchToken")
+                .GetAsync($"https://spark.gameforge.com/api/v1/patching/download/latest/nostale/default?locale={region}&architecture=x64&branchToken")
                 .ConfigureAwait(false);
             return JsonSerializer.Deserialize<ClientManifest>(await result.Content.ReadAsStringAsync().ConfigureAwait(false), new JsonSerializerOptions
             {
@@ -64,10 +64,10 @@ namespace NosCore.ParserInputGenerator.Downloader
 
                 if (entry.Folder)
                 {
-                    Directory.CreateDirectory($".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{entry.File}");
+                    Directory.CreateDirectory(ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File));
                     return;
                 }
-                var file = $".{Path.DirectorySeparatorChar}output{Path.DirectorySeparatorChar}{entry.File}";
+                var file = ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File);
                 if (File.Exists(file))
                 {
                     await using var fop = File.OpenRead(file);
@@ -83,6 +83,8 @@ namespace NosCore.ParserInputGenerator.Downloader
                 using var response = await client.GetAsync($"http://patches.gameforge.com/" + entry.Path)
                     .ConfigureAwait(false);
 
+                response.EnsureSuccessStatusCode();
+
                 var fileInfo = new FileInfo(file);
 
                 if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
@@ -91,7 +93,6 @@ namespace NosCore.ParserInputGenerator.Downloader
                 }
                 await using var fileStream = File.Create(file);
                 await using var stream = await response.Content.ReadAsStreamAsync();
-                stream.Seek(0, SeekOrigin.Begin);
                 await stream.CopyToAsync(fileStream);
                 _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOAD_SUCCESSFULL), file);
             }
