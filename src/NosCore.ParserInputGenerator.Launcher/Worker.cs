@@ -71,14 +71,7 @@ namespace NosCore.ParserInputGenerator.Launcher
         /// <returns>A task representing the asynchronous operation.</returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            try
-            {
-                Logger.PrintHeader(ConsoleText);
-            }
-            catch
-            {
-                // ignored as header is not important
-            }
+            Logger.PrintHeader(ConsoleText);
             var manifest = await _client.DownloadManifest();
 
             var requestedFiles = _parserInputFiles.ToHashSet(System.StringComparer.OrdinalIgnoreCase);
