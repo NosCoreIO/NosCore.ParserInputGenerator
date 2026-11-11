@@ -43,7 +43,7 @@ Build and run the generator without a host .NET SDK:
 ```sh
 podman build -t noscore-parser-input-generator .
 podman run --rm \
-  -v "$PWD/output:/app/build/net10.0/output" \
+  -v "$PWD/output:/app/build/net11.0/output" \
   noscore-parser-input-generator
 ```
 
