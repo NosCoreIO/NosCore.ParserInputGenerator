@@ -2,8 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NosCore.ParserInputGenerator.Downloader;
-using NosCore.ParserInputGenerator.Extractor;
+using NosCore.ParserInputGenerator.Generator;
 using NosCore.ParserInputGenerator.Launcher.Configuration;
 using NosCore.Shared.Configuration;
 using Serilog;
@@ -44,9 +43,7 @@ namespace NosCore.ParserInputGenerator.Launcher
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton(configuration);
-                    services.AddTransient<IExtractor, Extractor.Extractor>();
-                    services.AddTransient<IClientDownloader, ClientDownloader>();
-                    services.AddHttpClient();
+                    services.AddParserInputGenerator();
                     services.AddHostedService<Worker>();
                 }); 
         }

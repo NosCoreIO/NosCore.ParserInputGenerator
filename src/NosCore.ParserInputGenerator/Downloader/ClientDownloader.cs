@@ -36,6 +36,20 @@ namespace NosCore.ParserInputGenerator.Downloader
             _logger = logger;
         }
 
+        private const int DownloadAttempts = 3;
+
+        private static async Task<bool> HasChecksumAsync(string file, string? sha1)
+        {
+            if (!File.Exists(file))
+            {
+                return false;
+            }
+
+            await using var stream = File.OpenRead(file);
+            var checksum = Convert.ToHexString(await System.Security.Cryptography.SHA1.HashDataAsync(stream)).ToLowerInvariant();
+            return checksum == sha1;
+        }
+
         /// <inheritdoc/>
         public Task<ClientManifest> DownloadManifest() => DownloadManifestAsync(RegionType.EN);
 
@@ -56,7 +70,15 @@ namespace NosCore.ParserInputGenerator.Downloader
         public async Task DownloadClientAsync() => await DownloadClientAsync(await DownloadManifest());
 
         /// <inheritdoc/>
-        public async Task DownloadClientAsync(ClientManifest manifest)
+        public Task DownloadClientAsync(ClientManifest manifest) => DownloadClientAsync(manifest, Path.Combine(".", "output"));
+
+        /// <summary>
+        /// Downloads the manifest's entries under <paramref name="root"/>, skipping files whose checksum already matches.
+        /// </summary>
+        /// <param name="manifest">The entries to download.</param>
+        /// <param name="root">The folder to download into.</param>
+        /// <returns>A task that completes once every entry is downloaded.</returns>
+        public async Task DownloadClientAsync(ClientManifest manifest, string root)
         {
             async Task Download(Entry entry)
             {
@@ -64,36 +86,52 @@ namespace NosCore.ParserInputGenerator.Downloader
 
                 if (entry.Folder)
                 {
-                    Directory.CreateDirectory(ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File));
+                    Directory.CreateDirectory(ManifestPath.ToLocalPath(root, entry.File));
                     return;
                 }
-                var file = ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File);
-                if (File.Exists(file))
+                var file = ManifestPath.ToLocalPath(root, entry.File);
+                if (await HasChecksumAsync(file, entry.Sha1))
                 {
-                    await using var fop = File.OpenRead(file);
-                    var chksum = BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop)).Replace("-", "").ToLowerInvariant();
-                    if (chksum == entry.Sha1)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
-                _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOADING),
-                    entry.Path);
-                using var response = await client.GetAsync($"http://patches.gameforge.com/" + entry.Path)
-                    .ConfigureAwait(false);
-
-                response.EnsureSuccessStatusCode();
-
                 var fileInfo = new FileInfo(file);
-
                 if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
                 {
                     Directory.CreateDirectory(fileInfo.Directory.FullName);
                 }
-                await using var fileStream = File.Create(file);
-                await using var stream = await response.Content.ReadAsStreamAsync();
-                await stream.CopyToAsync(fileStream);
+
+                // A transfer cut short, or a file that arrives with the wrong checksum, is fetched again.
+                for (var attempt = 1; ; attempt++)
+                {
+                    _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOADING), entry.Path);
+                    try
+                    {
+                        using var response = await client.GetAsync($"http://patches.gameforge.com/" + entry.Path,
+                            HttpCompletionOption.ResponseHeadersRead);
+                        response.EnsureSuccessStatusCode();
+                        await using (var fileStream = File.Create(file))
+                        {
+                            await using var stream = await response.Content.ReadAsStreamAsync();
+                            await stream.CopyToAsync(fileStream);
+                        }
+
+                        if (await HasChecksumAsync(file, entry.Sha1))
+                        {
+                            break;
+                        }
+
+                        if (attempt == DownloadAttempts)
+                        {
+                            throw new InvalidDataException($"{entry.Path} does not match its checksum after {DownloadAttempts} downloads.");
+                        }
+                    }
+                    catch (Exception e) when (e is HttpRequestException or IOException && attempt < DownloadAttempts)
+                    {
+                        _logger.LogWarning(e, LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.ERROR));
+                    }
+                }
+
                 _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DOWNLOAD_SUCCESSFULL), file);
             }
 
