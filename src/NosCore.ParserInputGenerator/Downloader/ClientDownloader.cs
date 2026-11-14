@@ -56,7 +56,15 @@ namespace NosCore.ParserInputGenerator.Downloader
         public async Task DownloadClientAsync() => await DownloadClientAsync(await DownloadManifest());
 
         /// <inheritdoc/>
-        public async Task DownloadClientAsync(ClientManifest manifest)
+        public Task DownloadClientAsync(ClientManifest manifest) => DownloadClientAsync(manifest, Path.Combine(".", "output"));
+
+        /// <summary>
+        /// Downloads the manifest's entries under <paramref name="root"/>, skipping files whose checksum already matches.
+        /// </summary>
+        /// <param name="manifest">The entries to download.</param>
+        /// <param name="root">The folder to download into.</param>
+        /// <returns>A task that completes once every entry is downloaded.</returns>
+        public async Task DownloadClientAsync(ClientManifest manifest, string root)
         {
             async Task Download(Entry entry)
             {
@@ -64,10 +72,10 @@ namespace NosCore.ParserInputGenerator.Downloader
 
                 if (entry.Folder)
                 {
-                    Directory.CreateDirectory(ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File));
+                    Directory.CreateDirectory(ManifestPath.ToLocalPath(root, entry.File));
                     return;
                 }
-                var file = ManifestPath.ToLocalPath(Path.Combine(".", "output"), entry.File);
+                var file = ManifestPath.ToLocalPath(root, entry.File);
                 if (File.Exists(file))
                 {
                     await using var fop = File.OpenRead(file);
