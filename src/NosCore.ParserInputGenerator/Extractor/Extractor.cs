@@ -114,6 +114,7 @@ namespace NosCore.ParserInputGenerator.Extractor
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Extraction failed for {File}", nosFile.FullName);
+                throw;
             }
         }
 
