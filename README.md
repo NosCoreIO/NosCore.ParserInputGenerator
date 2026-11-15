@@ -1,53 +1,81 @@
-# NosCore.ParserInputGenerator #
+<p align="center">
+  <img width="200" alt="NosCore" src="icon.png"/>
+</p>
+
+<h1 align="center">NosCore.ParserInputGenerator</h1>
 
 <p align="center">
-  <img width="250px" src="https://github.com/NosCoreIO/NosCore.Packets/blob/15.0.1/icon.png"/>
+  <a href="https://www.nuget.org/packages/NosCore.ParserInputGenerator/"><img alt="NuGet" src="https://img.shields.io/nuget/v/NosCore.ParserInputGenerator.svg?style=flat-square"/></a>
+  <a href="https://github.com/NosCoreIO/NosCore.ParserInputGenerator/actions/workflows/dotnet.yml"><img alt="Build" src="https://github.com/NosCoreIO/NosCore.ParserInputGenerator/actions/workflows/dotnet.yml/badge.svg?branch=master"/></a>
+  <a href="https://discord.gg/Eu3ETSw"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?style=flat-square&logo=discord&logoColor=white"/></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square"/></a>
 </p>
 
-[![NuGet](https://img.shields.io/nuget/v/NosCore.ParserInputGenerator.svg?style=flat-square)](https://www.nuget.org/packages/NosCore.ParserInputGenerator/)
-[![.NET](https://github.com/NosCoreIO/NosCore.ParserInputGenerator/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/NosCoreIO/NosCore.ParserInputGenerator/actions/workflows/dotnet.yml)
+Downloads the NosTale client's data archives from the official patch server and unpacks them into the folder layout
+that the NosCore parser reads: the `.dat` files, the language files and the maps.
 
-# Special Thanks for Contributions #
-<p align="left">
-<a href="https://www.navicat.com"><img height="100px" src="https://user-images.githubusercontent.com/35202750/207230064-dcf23adc-9e96-4481-9a53-cd212f5bd60e.png"/></a>
-</p>
+## Usage
 
-## You want to contribute ? ##
-[![Discord](https://i.gyazo.com/2115a3ecb258220f5b1a8ebd8c50eb8f.png)](https://discord.gg/Eu3ETSw)
-
-## You like our work ? ##
-<a href='https://github.com/sponsors/0Lucifer0' target='_blank'><img height='48' style='border:0px;height:46px;' src='https://i.gyazo.com/47b2ca2eb6e1ce38d02b04c410e1c82a.png' border='0' alt='Sponsor me!' /></a>
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A3562BQV)
-<a href='https://www.patreon.com/bePatron?u=6503887' target='_blank'><img height='46' style='border:0px;height:46px;' src='https://c5.patreon.com/external/logo/become_a_patron_button@2x.png' border='0' alt='Become a Patron!' /></a>
-
-## Warning! ##
-We are not responsible of any damages caused by bad usage of our source. Please before asking questions or installing this source read this readme and also do a research, google is your friend. If you mess up when installing our source because you didnt follow it, we will laugh at you. A lot.
-
-## Instructions to contribute ##
-
-### Disclaimer ###
-This project is a community project not for commercial use. The result is to learn and program together for prove the study.
-
-### Legal ###
-This is an independent and unofficial server for educational use ONLY. Using the Project might be against the TOS.
-
-### Contribution is only possible with Visual Studio 2026 ###
-We recommend usage of :
-* [Roslynator extension](https://github.com/JosefPihrt/Roslynator).
-* [Resharper](https://www.jetbrains.com/resharper/)
-
-## Linux/container usage
-
-Build and run the generator without a host .NET SDK:
-
-```sh
-podman build -t noscore-parser-input-generator .
-podman run --rm \
-  -v "$PWD/output:/app/build/net11.0/output" \
-  noscore-parser-input-generator
+```bash
+dotnet build
+cd build/net11.0
+dotnet NosCore.ParserInputGenerator.Launcher.dll
 ```
 
-The generated contract is `output/parser`, with binary map files in
-`output/parser/map`. Manifest paths are accepted with either `\\` or `/`
-separators. Optional language archives absent from the current Gameforge
-manifest are skipped rather than passed to the extractor.
+The result is `build/net11.0/output/parser`, with the binary map files in `output/parser/map`, plus a
+`parser-input-files.tar.bz2` of the same folder. Give that folder to the NosCore parser with `--folder`, as described
+in NosCore's [getting started guide](https://github.com/NosCoreIO/NosCore/blob/master/documentation/getting-started.md).
+Archives whose checksum has not changed since the last run are not downloaded again.
+
+### In a container
+
+```bash
+podman build -t noscore-parser-input-generator .
+podman run --rm -v "$PWD/output:/app/build/net11.0/output" noscore-parser-input-generator
+```
+
+### As a library
+
+```bash
+dotnet add package NosCore.ParserInputGenerator
+```
+
+`services.AddParserInputGenerator()` registers `ParserInputBuilder`, whose `BuildAsync(workFolder)` downloads into
+`workFolder/client` and unpacks into `workFolder/parser`.
+
+## Building
+
+```bash
+dotnet build
+dotnet test
+```
+
+## Contributing
+
+Questions, ideas and pull requests are welcome; most of the discussion happens on [Discord](https://discord.gg/Eu3ETSw).
+Any editor that handles .NET 11 works: `dotnet build` and `dotnet test` run on Windows, Linux and macOS.
+In Visual Studio, [Roslynator](https://github.com/dotnet/roslynator) and
+[ReSharper](https://www.jetbrains.com/resharper/) help keep to the code style.
+
+## Supporting NosCore
+
+NosCore is a spare-time open source project. Sponsoring buys time spent on the emulator and the packages around it,
+and gives the **Supporter** role on Discord.
+
+<p>
+  <a href="https://github.com/sponsors/0Lucifer0"><img alt="Sponsor on GitHub" src="https://img.shields.io/badge/GitHub-sponsor-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white"/></a>
+  <a href="https://ko-fi.com/A3562BQV"><img alt="Support on Ko-fi" src="https://img.shields.io/badge/Ko--fi-support-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white"/></a>
+  <a href="https://www.patreon.com/bePatron?u=6503887"><img alt="Become a patron" src="https://img.shields.io/badge/Patreon-become_a_patron-F96854?style=for-the-badge&logo=patreon&logoColor=white"/></a>
+</p>
+
+Thanks to [Navicat](https://www.navicat.com) for supporting the project.
+
+<a href="https://www.navicat.com"><img height="60" alt="Navicat" src="https://user-images.githubusercontent.com/35202750/207230064-dcf23adc-9e96-4481-9a53-cd212f5bd60e.png"/></a>
+
+## Legal
+
+NosCore is an independent, unofficial project for educational use. It is not affiliated with, authorized, maintained,
+sponsored or endorsed by Gameforge or any of its affiliates; NosTale is a trademark of Gameforge. Using it may be
+against the terms of service of NosTale servers.
+
+Released under the [MIT License](LICENSE).
