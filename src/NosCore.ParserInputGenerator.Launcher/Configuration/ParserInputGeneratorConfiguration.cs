@@ -1,4 +1,4 @@
-﻿using NosCore.Shared.Configuration;
+using NosCore.Shared.Configuration;
 
 namespace NosCore.ParserInputGenerator.Launcher.Configuration
 {
