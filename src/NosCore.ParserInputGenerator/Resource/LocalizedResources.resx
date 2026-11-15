@@ -120,4 +120,13 @@
   <data name="DOWNLOAD_SUCCESSFULL" xml:space="preserve">
     <value>Downloaded {0} successfully</value>
   </data>
+  <data name="PARSER_INPUT_GENERATED" xml:space="preserve">
+    <value>Parser input generated</value>
+  </data>
+  <data name="ERROR" xml:space="preserve">
+    <value>Download failed, retrying</value>
+  </data>
+  <data name="DOWNLOADING" xml:space="preserve">
+    <value>Downloading {Path}</value>
+  </data>
 </root>

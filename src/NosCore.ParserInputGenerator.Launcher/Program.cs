@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NosCore.ParserInputGenerator.Generator;
+using NosCore.ParserInputGenerator.I18N;
 using NosCore.ParserInputGenerator.Launcher.Configuration;
 using NosCore.Shared.Configuration;
 using Serilog;
@@ -32,6 +33,7 @@ namespace NosCore.ParserInputGenerator.Launcher
         {
             var configuration = new ParserInputGeneratorConfiguration();
             ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "parser-input-generator.yml" }).Bind(configuration);
+            LogLanguage.Language = configuration.Language;
             return Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(
                     loggingBuilder =>
