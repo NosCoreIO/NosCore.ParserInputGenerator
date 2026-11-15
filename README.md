@@ -31,7 +31,8 @@ Archives whose checksum has not changed since the last run are not downloaded ag
 
 ```bash
 podman build -t noscore-parser-input-generator .
-podman run --rm -v "$PWD/output:/app/build/net11.0/output" noscore-parser-input-generator
+mkdir -p output
+podman run --rm -v "$PWD/output:/app/build/net11.0/output:Z" noscore-parser-input-generator
 ```
 
 ### As a library
